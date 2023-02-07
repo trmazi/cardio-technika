@@ -28,9 +28,11 @@ class DataConstants:
     REQUEST_CARD_S0_B2 = b'\x02\x00\x04\x35\x33\x00\x02\x03\x01'
 
     RESPONSE_AUTH_KEY = b'\x02\x00\x04\x35\x32\x00\x59\x03'
+    RESPONSE_AUTH_KEY_BAD = b'\x02\x00\x04\x35\x32\x00\x4e\x03'
     RESPONSE_CARD_INSERTED_FALSE = b'\x02\x00\x03\x31\x30\x4e\x03'
     RESPONSE_CARD_INSERTED_TRUE = b'\x02\x00\x03\x35\x30\x59\x03'
     RESPONSE_CARD_EJECT = b'\x02\x00\x03\x32\x30\x59\x03'
+    RESPONSE_CARD_EJECT_NO = b'\x02\x00\x03\x32\x30\x4e\x03'
     RESPONSE_UID_HEADER = b'\x02\x00\x07\x35\x31\x59'
     RESPONSE_CARD_S0_B1_HEADER = b'\x02\x00\x15\x35\x33\x00\x01\x59'
     RESPONSE_CARD_S0_B2_HEADER = b'\x02\x00\x15\x35\x33\x00\x02\x59'
@@ -40,13 +42,15 @@ class DataConstants:
     REQUEST_TYPE_GENERATED = 1
 
     STATUS_AUTH_KEY = 1
-    STATUS_CARD_INSERTED = 2
-    STATUS_FIND_CARD = 3
-    STATUS_FIND_CARD_OK = 8
-    STATUS_EJECT_CARD = 4
-    STATUS_GET_UID = 5
-    STATUS_GET_S0_B1 = 6
-    STATUS_GET_S0_B2 = 7
+    STATUS_AUTH_KEY_BAD = 2
+    STATUS_CARD_INSERTED = 3
+    STATUS_FIND_CARD = 4
+    STATUS_FIND_CARD_OK = 5
+    STATUS_EJECT_CARD = 6
+    STATUS_EJECT_CARD_NO = 7
+    STATUS_GET_UID = 8
+    STATUS_GET_S0_B1 = 9
+    STATUS_GET_S0_B2 = 10
 
     STATUS_STR = {
         STATUS_AUTH_KEY: 'AUTH_KEY',
@@ -101,10 +105,12 @@ class DataConstants:
 
         data = {
             self.STATUS_AUTH_KEY: self.RESPONSE_AUTH_KEY,
+            self.STATUS_AUTH_KEY_BAD: self.RESPONSE_AUTH_KEY_BAD,
             self.STATUS_CARD_INSERTED: self.RESPONSE_CARD_INSERTED_FALSE,
             self.STATUS_FIND_CARD: self.RESPONSE_CARD_INSERTED_FALSE,
             self.STATUS_FIND_CARD_OK: self.RESPONSE_CARD_INSERTED_TRUE,
-            self.STATUS_EJECT_CARD: self.RESPONSE_CARD_EJECT
+            self.STATUS_EJECT_CARD: self.RESPONSE_CARD_EJECT,
+            self.STATUS_EJECT_CARD_NO: self.RESPONSE_CARD_EJECT_NO
         }[request_status]
         print(f'Responding with: {str(data)}')
 
