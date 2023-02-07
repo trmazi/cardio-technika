@@ -19,6 +19,7 @@ class DataConstants:
     CARD_DATA = [0x00]*16
 
     REQUEST_AUTH_KEY = b'\x02\x00\x09\x35\x32\x00\x37\x21\x53\x6a\x72\x40\x03\x12' # (key = 37 21 53 6a 72 40)
+    REQUEST_AUTH_CYCLON = b'\x02\x00\t52\x00retsam\x03\x13' # (key = 114, 101, 116, 115, 97, 109, 0)
     REQUEST_CARD_INSERTED = b'\x02\x00\x02\x31\x30\x03\x02'
     REQUEST_FIND_CARD = b'\x02\x00\x02\x35\x30\x03\x06'
     REQUEST_EJECT_CARD = b'\x02\x00\x02\x32\x30\x03\x01'
@@ -41,6 +42,7 @@ class DataConstants:
     STATUS_AUTH_KEY = 1
     STATUS_CARD_INSERTED = 2
     STATUS_FIND_CARD = 3
+    STATUS_FIND_CARD_OK = 8
     STATUS_EJECT_CARD = 4
     STATUS_GET_UID = 5
     STATUS_GET_S0_B1 = 6
@@ -63,16 +65,18 @@ class DataConstants:
         '''
         status = {
             self.REQUEST_AUTH_KEY: self.STATUS_AUTH_KEY,
+            self.REQUEST_AUTH_CYCLON: self.STATUS_AUTH_KEY,
             self.REQUEST_CARD_INSERTED: self.STATUS_CARD_INSERTED,
             self.REQUEST_FIND_CARD: self.STATUS_FIND_CARD,
             self.REQUEST_EJECT_CARD: self.STATUS_EJECT_CARD,
             self.REQUEST_CARD_UID: self.STATUS_GET_UID,
             self.REQUEST_CARD_S0_B1: self.STATUS_GET_S0_B1,
-            self.REQUEST_CARD_S0_B2: self.REQUEST_CARD_S0_B2
+            self.REQUEST_CARD_S0_B2: self.STATUS_GET_S0_B2
         }[requested_data]
 
         d_type = {
             self.REQUEST_AUTH_KEY: self.REQUEST_TYPE_STATIC,
+            self.REQUEST_AUTH_CYCLON: self.REQUEST_TYPE_STATIC,
             self.REQUEST_CARD_INSERTED: self.REQUEST_TYPE_STATIC,
             self.REQUEST_FIND_CARD: self.REQUEST_TYPE_STATIC,
             self.REQUEST_EJECT_CARD: self.REQUEST_TYPE_STATIC,
@@ -98,7 +102,8 @@ class DataConstants:
         data = {
             self.STATUS_AUTH_KEY: self.RESPONSE_AUTH_KEY,
             self.STATUS_CARD_INSERTED: self.RESPONSE_CARD_INSERTED_FALSE,
-            self.STATUS_FIND_CARD: self.RESPONSE_CARD_INSERTED_TRUE,
+            self.STATUS_FIND_CARD: self.RESPONSE_CARD_INSERTED_FALSE,
+            self.STATUS_FIND_CARD_OK: self.RESPONSE_CARD_INSERTED_TRUE,
             self.STATUS_EJECT_CARD: self.RESPONSE_CARD_EJECT
         }[request_status]
         print(f'Responding with: {str(data)}')
@@ -106,7 +111,7 @@ class DataConstants:
         return data
 
     @classmethod
-    def sendUID(self, request_status: int, card_uid: hex) -> bytes:
+    def sendUID(self, request_status: int, card_uid: list[int]) -> bytes:
         '''
         Given the status and pulled card UID, return bytes of what game wants.
         '''
@@ -125,7 +130,7 @@ class DataConstants:
         return data
 
     @classmethod
-    def sendCardID(self, request_status: int, card_id: hex) -> bytes:
+    def sendCardID(self, request_status: int, card_id: list[int]) -> bytes:
         '''
         Given the request status and pulled card ID, decide which part
         of the card ID the game wants, return said part.
@@ -150,3 +155,10 @@ class DataConstants:
         print(f'Responding with: {str(data)}')
         
         return data
+
+    @classmethod
+    def calcBCC(self, data: bytes):
+        bcc = 0
+        for byte in data:
+            bcc ^= byte
+        return bytes([bcc])
