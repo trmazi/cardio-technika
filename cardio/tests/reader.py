@@ -66,7 +66,8 @@ class ReaderTest:
                         response = DataConstants.sendUID(status, [0x0F, 0x8F, 0x16, 0xB7])
 
                     elif status in [DataConstants.STATUS_GET_S0_B1, DataConstants.STATUS_GET_S0_B2]:
-                        response = DataConstants.sendCardID(status, [0x0F]*20)
+                        card = "DBFKXMQQHQHPSDFBYVXW"
+                        response = DataConstants.sendCardID(status, bytes(card, 'ASCII'))
             
                 time.sleep(.1)
                 com.write(response + DataConstants.calcBCC(response))
