@@ -3,6 +3,10 @@
 
 ## How to use
 
+If you don't want to use .py files...
+Go ahead and grab the latest release, use that instead!
+Release includes all dependencies already, just run and go.
+
 ### `cardio_technika.py`
 Here's the main software. To use it, here are the basic steps.
 - Install Com0Com or some other virtual null modem tool
